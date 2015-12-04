@@ -1,0 +1,29 @@
+db:
+  image: postgres
+#expose so we can run migrations
+  ports:
+   - "5433:5432"
+  environment:
+    POSTGRES_PASSWORD: web
+    POSTGRES_USER: web
+generators:
+  image: airinc/apidoc-generator:0.1.34
+  ports:
+   - "9002:9000"
+  command: /usr/share/apidoc-generator-generator/bin/generator
+api:
+  image: airinc/apidoc:0.9.48
+  ports:
+   - "9001:9000"
+  command: /usr/share/apidoc-api/bin/apidoc-api -Ddb.default.url="jdbc:postgresql://db/apidoc"
+  links:
+   - db
+   - generators
+www:
+  image: airinc/apidoc:0.9.48
+  ports:
+   - "9000:9000"
+  command: /usr/share/apidoc-www/bin/apidoc-www -Dplay.crypto.secret=foo -Dapidoc.api.host="http://api:9000" -Dapidoc.api.token="ZdRD61ODVPspeV8Wf18EmNuKNxUfjfROyJXtNJXj9GMMwrAxqi8I4aUtNAT6" -Dapidoc.www.host="http://localhost:9000"
+  links:
+   - api
+
