@@ -3,9 +3,11 @@ db:
 #expose so we can run migrations
   ports:
    - "5433:5432"
+  volumes:
+   - ./init:/docker-entrypoint-initdb.d
   environment:
-    POSTGRES_PASSWORD: web
     POSTGRES_USER: web
+    POSTGRES_PASSWORD: web
 generators:
   image: airinc/apidoc-generator:0.1.34
   ports:
